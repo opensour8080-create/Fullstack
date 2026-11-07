@@ -3,7 +3,7 @@ const path = require("path");
 const router = express.Router();
 
 
-const {createUser} = require("../controllers/user_controller");
+const {createUser, loginUser, updateUser} = require("../controllers/user_controller");
 
 router.get("/", (req, resp) => {
     resp.send("First Page (/)");
@@ -27,6 +27,15 @@ router.get("/user", (req, resp) => {
 });
 
 
+router.get("/login", (req, resp) => {
+    resp.sendFile(path.join(__dirname, "..", "public", "login.html")); 
+});
+
+
+
 router.post("/user", createUser);
+router.put("/user/:id", updateUser);
+router.post("/login", loginUser);
+
 
 module.exports = router;
