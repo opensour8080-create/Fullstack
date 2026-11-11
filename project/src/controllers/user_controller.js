@@ -49,6 +49,7 @@ exports.updateUser = async (req, resp) => {
 
 
 exports.loginUser = async (req, resp) => {
+    console.log("login:", req.session);
     const {password, email} = req.body;
     try{
         const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
@@ -68,4 +69,21 @@ exports.loginUser = async (req, resp) => {
     } catch (err){
         return resp.status(500).json({error: err.message});
     }
+};
+
+
+
+exports.logoutUser = (req, resp) => {
+        if (!req.session) {
+        return resp.status(200).json({ message: "Logged out" });
+    }
+
+    req.session.destroy((err) => {
+        if (err) {
+            return resp.status(500).json({ error: err.message });
+        }
+
+                resp.clearCookie("connect.sid");
+        return resp.status(200).json({ message: "Logged out" });
+    });
 };

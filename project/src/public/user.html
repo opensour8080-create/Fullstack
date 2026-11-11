@@ -6,13 +6,21 @@
 </head>
 <body>
     <h2>User</h2>
-    <!-- action указывает на наш роутер, method обязательно POST -->
-    <form action="/user" method="POST">
-        <input type="text" name="name" placeholder="name" required><br><br>
-        <input type="email" name="email" placeholder="email" required><br><br>
-        <input type="password" name="password" placeholder="password" required>
-        <button type="submit">Отправить в БД</button>
-    </form>
+
+   
+<button id="logoutBtn">Выйти</button>
+
+<script>
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await fetch("/logout", {
+      method: "POST",
+      credentials: "include"
+    });
+    window.location.href = "/login";
+  });
+</script>
+   
+
 </body>
 </html>
 
