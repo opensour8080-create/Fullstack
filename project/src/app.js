@@ -16,8 +16,8 @@ app.use(session({
 }));
 
 
-const Router = require("./routers/router.js");
-app.use("/", Router);
+const Router_user = require("./routers/router_user.js");
+app.use("/", Router_user);
 
 
 module.exports = app;
