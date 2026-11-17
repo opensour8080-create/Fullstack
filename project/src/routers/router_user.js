@@ -30,7 +30,7 @@ router.get("/login", (req, resp) => {
 
 router.get("/user", (req, resp) => {
     resp.sendFile(path.join(__dirname, "..", "public", "user.html"));
-});что 
+}); 
 
 
 
