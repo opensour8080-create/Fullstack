@@ -1,53 +1,43 @@
-const svc = require('../services/vacancy.service');
+const svc = require("../services/vacancy.service");
 
 module.exports = {
-  // GET /api/v1/vacancies
   async getAll(req, res, next) {
     try {
-      const items = await svc.list();
-      res.json(items);
-    } catch (e) {
-      next(e);
-    }
+      res.json(await svc.list());
+    } catch (e) { next(e); }
   },
 
-  // GET /api/v1/vacancies/:id:pwd
+  async getMy(req, res, next) {
+    try {
+      res.json(await svc.listByUser(req.session.userId));
+    } catch (e) { next(e); }
+  },
+
   async getOne(req, res, next) {
     try {
-      const v = await svc.get(req.params.id);
-      res.json(v);
-    } catch (e) {
-      next(e);
-    }
+      res.json(await svc.get(req.params.id));
+    } catch (e) { next(e); }
   },
 
-  // POST /api/v1/vacancies
   async create(req, res, next) {
     try {
-      const v = await svc.create(req.body);
+      const v = await svc.create(req.session.userId, req.body);
       res.status(201).json(v);
-    } catch (e) {
-      next(e);
-    }
+    } catch (e) { next(e); }
   },
 
-  // PUT /api/v1/vacancies/:id
   async update(req, res, next) {
     try {
-      const v = await svc.update(req.params.id, req.body);
+      const v = await svc.update(req.session.userId, req.params.id, req.body);
       res.json(v);
-    } catch (e) {
-      next(e);
-    }
+    } catch (e) { next(e); }
   },
 
-  // DELETE /api/v1/vacancies/:id
   async remove(req, res, next) {
     try {
-      await svc.remove(req.params.id);
+      await svc.remove(req.session.userId, req.params.id);
       res.status(204).end();
-    } catch (e) {
-      next(e);
-    }
+    } catch (e) { next(e); }
   },
 };
+

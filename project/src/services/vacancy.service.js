@@ -1,52 +1,57 @@
-const repo = require('../repositories/vacancy.repository');
-
+const repo = require("../repositories/vacancy.repository");
 
 const httpError = (status, message) =>
   Object.assign(new Error(message), { status });
 
 module.exports = {
-
   async list() {
     return repo.findAll();
   },
 
-  
+  async listByUser(userId) {
+    return repo.findByUserId(userId);
+  },
+
   async get(id) {
     const v = await repo.findById(id);
-    if (!v) throw httpError(404, 'Not found');
+    if (!v) throw httpError(404, "Not found");
     return v;
   },
 
-  
-  async create(dto) {
+  async create(userId, dto) {
     this.validate(dto);
-    return repo.create(dto);
+    return repo.create({ ...dto, userId });
   },
 
-  
-  async update(id, dto) {
+  async update(userId, id, dto) {
     this.validate(dto);
-    const v = await repo.update(id, dto);
-    if (!v) throw httpError(404, 'Not found');
-    return v;
+    const existing = await repo.findById(id);
+    if (!existing) throw httpError(404, "Not found");
+    if (String(existing.user_id) !== String(userId)) {
+      throw httpError(403, "Forbidden");
+    }
+    return repo.update(id, dto);
   },
 
-  
-  async remove(id) {
-    const ok = await repo.remove(id);
-    if (!ok) throw httpError(404, 'Not found');
+  async remove(userId, id) {
+    const existing = await repo.findById(id);
+    if (!existing) throw httpError(404, "Not found");
+    if (String(existing.user_id) !== String(userId)) {
+      throw httpError(403, "Forbidden");
+    }
+    await repo.remove(id);
   },
 
-  
   validate({ title, salary }) {
-    if (!title || typeof title !== 'string' || title.trim() === '') {
-      throw httpError(400, 'title is required');
+    if (!title || typeof title !== "string" || title.trim() === "") {
+      throw httpError(400, "title is required");
     }
     if (title.length > 200) {
-      throw httpError(400, 'title too long');
+      throw httpError(400, "title too long");
     }
-    if (salary != null && (typeof salary !== 'number' || salary < 0)) {
-      throw httpError(400, 'salary must be a non-negative number');
+    if (salary !== undefined && salary !== null && salary !== "" && Number(salary) < 0) {
+      throw httpError(400, "salary must be non-negative");
     }
   },
 };
+

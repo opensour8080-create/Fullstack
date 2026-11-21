@@ -1,12 +1,22 @@
 const express = require("express");
 const router = express.Router();
+const { apiAuth } = require("../middlewares/requireAuth");
 
-const { getAll, getOne, create, remove, update } = require("../controllers/vacancy_controller");
+const { getAll, getMy, getOne, create, remove, update } = require("../controllers/vacancy_controller");
+const { apply, myApplications, vacancyResponses } = require("../controllers/application_controller");
 
+// Вакансии
 router.get("/vacancies", getAll);
-router.post("/vacancies", create);
+router.get("/vacancies/my", apiAuth, getMy);
 router.get("/vacancies/:id", getOne);
-router.put("/vacancies/:id", update);
-router.delete("/vacancies/:id", remove);
+router.post("/vacancies", apiAuth, create);
+router.put("/vacancies/:id", apiAuth, update);
+router.delete("/vacancies/:id", apiAuth, remove);
 
-module.exports = router; 
+// Отклики
+router.post("/vacancies/:id/apply", apiAuth, apply);
+router.get("/vacancies/:id/responses", apiAuth, vacancyResponses);
+router.get("/my-applications", apiAuth, myApplications);
+
+module.exports = router;
+

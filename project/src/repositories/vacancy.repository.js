@@ -8,20 +8,28 @@ module.exports = {
     return rows;
   },
 
+  async findByUserId(userId) {
+    const { rows } = await db.query(
+      "SELECT * FROM vacancies WHERE user_id = $1 ORDER BY created_at DESC",
+      [userId]
+    );
+    return rows;
+  },
+
   async findById(id) {
     const { rows } = await db.query(
       "SELECT * FROM vacancies WHERE id = $1", [id]
     );
-    return rows[0] || null;
+    return rows || null;
   },
 
-  async create({ title, description, company, salary }) {
+  async create({ title, description, company, salary, userId }) {
     const { rows } = await db.query(
-      `INSERT INTO vacancies (title, description, company, salary)
-       VALUES ($1,$2,$3,$4) RETURNING *`,
-      [title, description, company, salary]
+      `INSERT INTO vacancies (title, description, company, salary, user_id)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [title, description, company, salary, userId]
     );
-    return rows[0];
+    return rows;
   },
 
   async update(id, { title, description, company, salary }) {
@@ -31,7 +39,7 @@ module.exports = {
        WHERE id=$5 RETURNING *`,
       [title, description, company, salary, id]
     );
-    return rows[0] || null;
+    return rows || null;
   },
 
   async remove(id) {
@@ -41,3 +49,4 @@ module.exports = {
     return rowCount > 0;
   },
 };
+
